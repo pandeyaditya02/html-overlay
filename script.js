@@ -1,23 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. PASTE YOUR NEW SINGLE GOOGLE SHEET URL HERE ---
+    // --- 1. SET YOUR LOCAL DATA FILE AND REFRESH RATE ---
 
-    // URL from publishing your 'AllData' sheet as a CSV
-    const googleSheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQa-YCXNluBVT0W_cJDgNoOdUR4-r5kb_SHsIH_iHcPMy0d1tlhX_3za0GvX89AVcD8LUDkhB7Xn2mP/pub?gid=1543965916&single=true&output=csv';
+    // Point to the local CSV file in your folder
+    const dataURL = 'data.csv';
 
     // How often to check for updates (in milliseconds)
-    const REFRESH_INTERVAL = 5000; // 5 seconds
+    const REFRESH_INTERVAL = 2000; // 2 seconds
 
     // --- 2. INITIAL (ZEROED) DATA ---
     
     let totalSeats = 243;
+
+    // Updated with new party names and data structure
     let leftPanelData = [
-        { name: 'BJP', seats: 0 },
-        { name: 'CONGRESS', seats: 0 },
-        { name: 'RJD', seats: 0 },
-        { name: 'JAN SURAAJ ', seats: 0 },
-        { name: 'OTH', seats: 0 }
+        { name: 'BJP', leads: 0, won: 0 },
+        { name: 'JDU', leads: 0, won: 0 },
+        { name: 'LJP', leads: 0, won: 0 },
+        { name: 'RJD', leads: 0, won: 0 },
+        { name: 'Congress', leads: 0, won: 0 },
+        { name: 'VIP', leads: 0, won: 0 },
+        { name: 'IIP', leads: 0, won: 0 },
+        { name: 'JanSuraj Party', leads: 0, won: 0 },
+        { name: 'Others', leads: 0, won: 0 }
     ];
+
     let bottomPanelData = [
         { name: 'NDA', seats: 0 },
         { name: 'MGB', seats: 0 },
@@ -37,9 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
         leftPanelData.forEach((party, index) => {
             const row = document.createElement('div');
             row.className = 'party-row';
+            // UPDATED: New HTML structure for leads and won
             row.innerHTML = `
                 <span class="party-name">${party.name}</span>
-                <span class="party-seats" id="party-seats-${index}" data-target="${party.seats}">0</span>
+                <span class="party-leads" id="party-leads-${index}" data-target="${party.leads}">0</span>
+                <span class="party-won" id="party-won-${index}" data-target="${party.won}">0</span>
             `;
             partyList.appendChild(row);
         });
@@ -60,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to calculate and set the trends tally
     function updateTrendsTally() {
+        // Trends tally is based on the bottom panel (alliances)
         const currentTrends = bottomPanelData.reduce((sum, party) => sum + party.seats, 0);
         trendsTallyEl.setAttribute('data-target-current', currentTrends);
         trendsTallyEl.setAttribute('data-target-total', totalSeats);
@@ -67,9 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to animate all numbers
     function animateNumbers() {
+        // UPDATED: Animate both leads and won
         leftPanelData.forEach((party, index) => {
-            const el = document.getElementById(`party-seats-${index}`);
-            animateCountUp(el, party.seats);
+            const leadsEl = document.getElementById(`party-leads-${index}`);
+            const wonEl = document.getElementById(`party-won-${index}`);
+            animateCountUp(leadsEl, party.leads);
+            animateCountUp(wonEl, party.won);
         });
 
         bottomPanelData.forEach((party, index) => {
@@ -121,17 +134,18 @@ document.addEventListener('DOMContentLoaded', () => {
         window.requestAnimationFrame(step);
     }
 
-    // --- 4. NEW GOOGLE SHEETS DATA FETCHER ---
+    // --- 4. LOCAL FILE DATA FETCHER ---
 
-    // Main function to update all data from the single sheet
-    async function updateDataFromSheets() {
-        console.log("Checking for updates...");
+    // Main function to update all data from the local sheet
+    async function updateDataFromFile() {
+        console.log("Checking for updates from data.csv...");
         
         try {
-            // Add cache-busting parameter to URL
-            const cacheBustURL = `${googleSheetURL}&t=${new Date().getTime()}`;
+            const cacheBustURL = `${dataURL}?t=${new Date().getTime()}`;
             const response = await fetch(cacheBustURL);
-            if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+            }
             
             const csvText = await response.text();
             
@@ -144,28 +158,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const rows = csvText.trim().split('\n').slice(1);
             
             rows.forEach(row => {
-                const [type, name, value] = row.split(',');
-                if (!type || !name || value === undefined) return; // Skip empty rows
+                // UPDATED: Parse 4 columns
+                const [type, name, value1, value2] = row.split(',');
+                if (!type || !name || value1 === undefined) return; // Skip empty rows
 
                 const formattedName = name.trim();
-                const formattedValue = parseInt(value.trim()) || 0;
+                const formattedValue1 = parseInt(value1.trim()) || 0;
+                const formattedValue2 = parseInt(value2.trim()) || 0; // For 'won'
 
                 if (type.trim() === 'left') {
-                    newLeftData.push({ name: formattedName, seats: formattedValue });
+                    // UPDATED: Save both leads and won
+                    newLeftData.push({ name: formattedName, leads: formattedValue1, won: formattedValue2 });
                 } else if (type.trim() === 'bottom') {
-                    newBottomData.push({ name: formattedName, seats: formattedValue });
+                    // 'bottom' only uses Value1
+                    newBottomData.push({ name: formattedName, seats: formattedValue1 });
                 } else if (type.trim() === 'config' && formattedName === 'TotalSeats') {
-                    newTotalSeats = formattedValue;
+                    // 'config' only uses Value1
+                    newTotalSeats = formattedValue1;
                 }
             });
 
             // Check if data has actually changed before re-rendering
             let dataChanged = false;
-            if (JSON.stringify(newLeftData) !== JSON.stringify(leftPanelData)) {
+            if (newLeftData.length > 0 && JSON.stringify(newLeftData) !== JSON.stringify(leftPanelData)) {
                 leftPanelData = newLeftData;
                 dataChanged = true;
             }
-            if (JSON.stringify(newBottomData) !== JSON.stringify(bottomPanelData)) {
+            if (newBottomData.length > 0 && JSON.stringify(newBottomData) !== JSON.stringify(bottomPanelData)) {
                 bottomPanelData = newBottomData;
                 dataChanged = true;
             }
@@ -174,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 dataChanged = true;
             }
 
-            // Only re-render and animate if data has actually changed
             if (dataChanged) {
                 console.log("Data changed, updating overlay!");
                 renderPanels();
@@ -189,15 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. INITIAL RUN ---
-
-    // 1. Render the initial (zeroed) panels immediately
     renderPanels();
     animateNumbers();
-
-    // 2. Fetch data from Google Sheets for the first time
-    updateDataFromSheets();
-
-    // 3. Set an interval to keep checking for updates
-    setInterval(updateDataFromSheets, REFRESH_INTERVAL);
+    updateDataFromFile();
+    setInterval(updateDataFromFile, REFRESH_INTERVAL);
 
 });

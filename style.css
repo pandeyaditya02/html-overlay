@@ -24,7 +24,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     left: -350px; /* Start off-screen */
-    width: 300px;
+    width: 320px; /* Increased width for new column */
     background-color: var(--color-bg-dark);
     backdrop-filter: blur(8px);
     border: 2px solid var(--color-cyan);
@@ -65,13 +65,35 @@ body {
     100% { transform: scale(0.9); }
 }
 
-#party-list {
+/* --- NEW: Left Panel Header Row --- */
+.party-row-header {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.4);
+    font-weight: 700;
+    font-size: 14px;
     padding: 5px;
+    text-align: center;
+}
+
+.party-name-header {
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.party-leads-header,
+.party-won-header {
+    width: 60px; /* Fixed width for header */
+}
+/* --- End New Styles --- */
+
+#party-list {
+    padding: 0 5px 5px 5px; /* Adjusted padding */
 }
 
 .party-row {
     display: flex;
-    margin-bottom: 5px;
+    margin-top: 5px;
     font-weight: 700;
     font-size: 18px;
 }
@@ -79,20 +101,37 @@ body {
 .party-name {
     background-color: var(--color-wine);
     padding: 8px 12px;
-    flex-grow: 1;
+    flex-grow: 1; /* Takes remaining space */
     border-radius: 5px 0 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.party-seats {
+/* --- UPDATED: New Column Styles --- */
+.party-leads,
+.party-won {
     background-color: var(--color-cyan);
     color: var(--color-text-dark);
     font-weight: 900;
     font-size: 22px;
-    padding: 8px 15px;
-    min-width: 50px;
+    padding: 8px 5px;
+    width: 60px; /* Fixed width */
     text-align: center;
-    border-radius: 0 5px 5px 0;
 }
+
+.party-leads {
+    margin-left: 2px;
+    border-radius: 5px;
+}
+
+.party-won {
+    background-color: #f1c40f; /* Gold color for "Won" */
+    margin-left: 2px;
+    border-radius: 5px;
+}
+/* --- End Updated Styles --- */
+
 
 /* --- BOTTOM PANEL --- */
 #bottom-panel {
@@ -148,7 +187,6 @@ body {
     font-weight: 900;
 }
 
-/* --- BOTTOM PANEL - TALLY BLOCKS (Expanded) --- */
 #main-tally {
     display: flex;
     height: 100%;
@@ -187,5 +225,3 @@ body {
     align-items: center;
     justify-content: center;
 }
-
-/* --- Test Button Styling Removed --- */

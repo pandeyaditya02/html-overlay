@@ -1,11 +1,15 @@
-Type,Name,Value
-left,BJP,0
-left,CONGRESS,0
-left,RJD,0
-left,JAN SURAAJ,0
-left,OTH,0
-bottom,NDA,0
-bottom,MGB,0
-bottom,JAN SURAAJ,0
-bottom,OTHERS,0
-config,TotalSeats,243
+Type,Name,Value1,Value2
+left,BJP,10,20
+left,JDU,0,0
+left,LJP,0,0
+left,RJD,0,0
+left,Congress,0,0
+left,VIP,10,35
+left,IIP,0,0
+left,JanSuraj Party,30,0
+left,Others,0,0
+bottom,NDA,10,
+bottom,MGB,0,
+bottom,JAN SURAAJ,10,
+bottom,OTHERS,0,
+config,TotalSeats,243,
