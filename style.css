@@ -83,7 +83,8 @@ body {
 
 .party-leads-header,
 .party-won-header {
-    width: 60px; /* Fixed width for header */
+    width: 72px; /* Fixed width for header */
+    text-align: center; /* ALIGN HEADER TO CENTER */
 }
 /* --- End New Styles --- */
 
@@ -117,7 +118,7 @@ body {
     font-size: 22px;
     padding: 8px 5px;
     width: 60px; /* Fixed width */
-    text-align: center;
+    text-align: center; /* MODIFICATION 1: Leads and Won centered */
 }
 
 .party-leads {
@@ -166,6 +167,12 @@ body {
     font-weight: 900;
     font-size: 28px;
     letter-spacing: 1px;
+    /* MODIFICATION 2: Bihar in center of total */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center items vertically */
+    height: 100%; /* Ensure it takes full height of its parent */
+    text-align: center; /* <-- ADD THIS LINE */
 }
 
 .trends-box {
@@ -173,8 +180,9 @@ body {
     font-size: 16px;
     padding: 5px 10px;
     border-radius: 5px;
-    margin-top: 5px;
+    /* margin-top: 5px; /* Removed, let flexbox handle spacing */
     font-weight: 700;
+    text-align: center; /* Center "TRENDS" text */
 }
 
 #trends-tally {
