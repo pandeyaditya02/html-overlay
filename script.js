@@ -16,11 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let leftPanelData = [
         { name: 'BJP', leads: 0, won: 0 },
         { name: 'JDU', leads: 0, won: 0 },
-        { name: 'LJP', leads: 0, won: 0 },
+        { name: 'LJPRV', leads: 0, won: 0 },
         { name: 'RJD', leads: 0, won: 0 },
         { name: 'Congress', leads: 0, won: 0 },
-        { name: 'VIP', leads: 0, won: 0 },
-        { name: 'IIP', leads: 0, won: 0 },
+        { name: 'CPI(ML)(L)', leads: 0, won: 0 },
+        { name: 'HAMS', leads: 0, won: 0 },
         { name: 'JanSuraj Party', leads: 0, won: 0 },
         { name: 'Others', leads: 0, won: 0 }
     ];
